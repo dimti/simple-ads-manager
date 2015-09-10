@@ -455,7 +455,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $SAM_Query = array('clauses' => $this->whereClauses);
       $clauses64 = base64_encode(serialize($SAM_Query['clauses']));
       
-      wp_enqueue_script('jquery');
+      //wp_enqueue_script('jquery');
       if($options['useSWF']) wp_enqueue_script('swfobject');
       wp_enqueue_script('samLayout', SAM_URL.'js/sam-layout.min.js', array('jquery'), SAM_VERSION);
       wp_localize_script('samLayout', 'samAjax', array(
