@@ -361,8 +361,10 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
           $wci = " OR (sa.view_type = 2 AND FIND_IN_SET({$postID}, sa.view_id))";
           $wcx = " AND IF(sa.x_id, NOT FIND_IN_SET({$postID}, sa.x_view_id), TRUE)";
           $author = get_userdata($post->post_author);
-          $wca = " AND IF(sa.view_type < 2 AND sa.ad_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$author->user_nicename}\", sa.view_authors), TRUE)";
-          $wcxa = " AND IF(sa.view_type < 2 AND sa.x_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$author->user_nicename}\", sa.x_view_authors), TRUE)";
+		  if ($author) {
+            $wca = " AND IF(sa.view_type < 2 AND sa.ad_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$author->user_nicename}\", sa.view_authors), TRUE)";
+            $wcxa = " AND IF(sa.view_type < 2 AND sa.x_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$author->user_nicename}\", sa.x_view_authors), TRUE)";
+		  }
         }
         if(is_page()) {
           global $post;
