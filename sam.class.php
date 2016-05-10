@@ -83,7 +83,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '2.9.6.121');
+      define('SAM_VERSION', '2.9.8.125');
       define('SAM_DB_VERSION', '2.9');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url( '/',  __FILE__  ) );
@@ -267,7 +267,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       if($settings['adCycle'] == 0) $cycle = 1000;
       else $cycle = $settings['adCycle'];
 
-      global $current_user, $wpdb;
+      global $wpdb;
 
       $sTable = $wpdb->prefix . 'sam_stats';
 
@@ -284,7 +284,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $wcxct = '';
 
       if(is_user_logged_in()) {
-        get_currentuserinfo();
+        $current_user = wp_get_current_user();
         $uSlug = $current_user->user_nicename;
         $wcul = "IF(sa.ad_users_reg = 1, IF(sa.x_ad_users = 1, NOT FIND_IN_SET(\"$uSlug\", sa.x_view_users), TRUE) AND IF(sa.ad_users_adv = 1, (sa.adv_nick <> \"$uSlug\"), TRUE), FALSE)";
       }
@@ -361,10 +361,8 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
           $wci = " OR (sa.view_type = 2 AND FIND_IN_SET({$postID}, sa.view_id))";
           $wcx = " AND IF(sa.x_id, NOT FIND_IN_SET({$postID}, sa.x_view_id), TRUE)";
           $author = get_userdata($post->post_author);
-		  if ($author) {
-            $wca = " AND IF(sa.view_type < 2 AND sa.ad_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$author->user_nicename}\", sa.view_authors), TRUE)";
-            $wcxa = " AND IF(sa.view_type < 2 AND sa.x_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$author->user_nicename}\", sa.x_view_authors), TRUE)";
-		  }
+          $wca = " AND IF(sa.view_type < 2 AND sa.ad_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$author->user_nicename}\", sa.view_authors), TRUE)";
+          $wcxa = " AND IF(sa.view_type < 2 AND sa.x_authors AND IF(sa.view_type = 0, sa.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$author->user_nicename}\", sa.x_view_authors), TRUE)";
         }
         if(is_page()) {
           global $post;
@@ -457,7 +455,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $SAM_Query = array('clauses' => $this->whereClauses);
       $clauses64 = base64_encode(serialize($SAM_Query['clauses']));
       
-      //wp_enqueue_script('jquery');
+      wp_enqueue_script('jquery');
       if($options['useSWF']) wp_enqueue_script('swfobject');
       wp_enqueue_script('samLayout', SAM_URL.'js/sam-layout.min.js', array('jquery'), SAM_VERSION);
       wp_localize_script('samLayout', 'samAjax', array(
